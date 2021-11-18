@@ -1,3 +1,4 @@
+//definimos la clase Board que contiene los objetos y elementos del tablero
 (function (){
     self.Board = function (width,height){
         this.width = width;
@@ -16,7 +17,7 @@
         }
     }
 })();
-
+// definimos la clase Boardview que contiene los objetos de la vista 
 (function (){
     self.Boardview = function (canvas,board){
         this.canvas = canvas;
@@ -27,8 +28,10 @@
     }
 })();
 
+//iniciamos nuestra funcion main cuando carge la pagina
 window.addEventListener('load', main);
 
+//definimos la funcion main que inicia el juego
 function main (){
     var board = new Board(800,400);
     var canvas = document.getElementById('canvas');
