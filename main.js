@@ -27,13 +27,20 @@
     this.board = board;
     this.board.bars.push(this);
     this.kind = "rectangle";
-    
+    this.speed = 10;
 
     self.Bar.prototype = {
-      down: function () {},
-      up: function () {}
-    }
-  }
+      down: function () {
+        this.y += this.speed;
+      },
+      up: function () {
+        this.y -= this.speed;
+      },
+      toString: function () {
+        return "x: " + this.x + " y: " + this.y;
+      }
+    };
+  };
 })();
 
 // definimos la clase Boardview que contiene los objetos de la vista
@@ -47,19 +54,13 @@
   };
   self.BoardView.prototype = {
     draw: function () {
-        var ctx = this.ctx;
-        var board = this.board;
-        ctx.fillStyle = "white";
-        ctx.fillRect(0, 0, board.width, board.height);
-        for (var i = 0; i < board.element.length; i++) {
-            var element = board.element[i];
-            ctx.fillStyle = "black";
-            ctx.fillRect(element.x, element.y, element.width, element.height);
-        }
+      for(var i = this.board.element.length -1;i>=0; i--) {
+        var el = this.board.element[i];
+        draw(this.ctx, el);
+      }
     }
   };
   function draw(ctx, element) {
-    console.log("hola mundo");
     if (element !== null && element.hasOwnProperty("kind")) {
       switch (element.kind) {
         case "rectangle":
@@ -69,16 +70,24 @@
     }
   }
 })();
+var board = new Board(800, 400);
+var bar = new Bar(20, 100, 40, 100, board);
+var bar2 = new Bar(740, 100, 40, 100, board);
+var canvas = document.getElementById("canvas");
+var Board_view = new BoardView(canvas, board);
+
+document.addEventListener("keydown", function (e) {
+    if (e.keyCode== 38) {
+        bar.up();
+    } else if (e.keyCode == 40) {
+        bar.down();
+    }
+});
 
 //iniciamos nuestra funcion main cuando carge la pagina
 window.addEventListener("load", main);
 
 //definimos la funcion main que inicia el juego
 function main() {
-  var board = new Board(800, 400);
-  var bar = new Bar(20, 100, 40, 100, board);
-  var bar2 = new Bar(740, 100, 40, 100, board);
-  var canvas = document.getElementById("canvas");
-  var Board_view = new BoardView(canvas, board);
   Board_view.draw();
 }
