@@ -7,30 +7,40 @@
         this.game_over = false;
         this.bars = [];
         this.ball = null;
+        this.playing = false;
     };
 
     self.Board.prototype = {
         get element() {
-            var elements = this.bars;
+            var elements = this.bars.map(function (bar) {
+                return bar;
+            });
             elements.push(this.ball);
             return elements;
         },
     };
 })();
-
+//se define el constructor para la clase Ball para la pelota
 (function () {
     self.Ball = function (x, y, radius, board) {
         this.x = x;
         this.y = y;
         this.radius = radius;
         this.board = board;
-        this.dx = 0;
-        this.dy = 0;
-        board.ball =this;
+        this.dx = 3;
+        this.dy = 3;
+        board.ball = this;
         this.kind = "circle";
-    }
+        this.direction = 1;
+    };
+    self.Ball.prototype = {
+        move: function () {
+            this.x += this.dx * this.direction;
+            this.y += this.dy * this.direction;
+        },
+    };
 })();
-
+//se define el constructor de la clase Bar para las barras
 (function () {
     self.Bar = function (x, y, width, height, board) {
         this.x = x;
@@ -76,9 +86,12 @@
             }
         },
         play: function () {
-            this.clean();
-            this.draw();
-        }
+            if (this.board.playing) {
+                this.clean();
+                this.draw();
+                this.board.ball.move();
+            }
+        },
     };
 
     function draw(ctx, element) {
@@ -103,20 +116,37 @@ var canvas = document.getElementById("canvas");
 var Board_view = new BoardView(canvas, board);
 var ball = new Ball(400, 100, 10, board);
 
+Board_view.draw();
 window.requestAnimationFrame(controller);
 
 document.addEventListener("keydown", function (e) {
     console.log(e.keyCode);
-    e.preventDefault();
+    //tecla w
     if (e.keyCode == 87) {
+        e.preventDefault();
         bar_3.up();
-    } else if (e.keyCode == 83) {
+    }
+    //tecla s 
+    else if (e.keyCode == 83) {
+        e.preventDefault();
         bar_3.down();
-    } else if (e.keyCode == 38) {
+    }
+    //tecla up 
+    else if (e.keyCode == 38) {
+        e.preventDefault();
         bar_2.up();
-    } else if (e.keyCode == 40) {
+    }
+    //tecla down 
+    else if (e.keyCode == 40) {
+        e.preventDefault();
         bar_2.down();
     }
+    //tecla espacio 
+    else if (e.keyCode === 32) {
+        e.preventDefault();
+        board.playing = !board.playing;
+    }
+
     console.log(bar_2.toString());
     console.log(bar_3.toString());
 });
